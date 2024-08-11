@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-
+import commentRouter from "./routes/comment.route.js";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config();
@@ -24,7 +24,7 @@ app.listen(port, () => {
   console.log("Server is running on port " + port);
 });
 
-//app.use("/api/user", userRouter);
+app.use("/api/comment", commentRouter);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
 
