@@ -76,7 +76,7 @@ export const getComments = async (req, res, next) => {
     const startIndex = parseInt(req.query.startIndex) || 0;
 
     const sort = req.query.sort || "createdAt";
-    const order = req.query.order || "desc";
+    const order = req.query.order || "desc"; // Default to descending order
 
     const comments = await Comment.find({})
       .sort({ [sort]: order })

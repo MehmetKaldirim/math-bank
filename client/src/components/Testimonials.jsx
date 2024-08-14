@@ -14,17 +14,18 @@ import { app } from "../firebase";
 const Testimonials = () => {
   const [share, setShare] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     title: "",
     avatar: null,
-    thoughts: "",
+    comment: "",
   });
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [showMore, setShowMore] = useState(true);
+  const [limit, setLimit] = useState(3);
 
-  console.log(filePerc);
-  console.log(file);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -35,10 +36,6 @@ const Testimonials = () => {
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setFormData((prevData) => ({
-      ...prevData,
-      avatar: file,
-    }));
   };
 
   useEffect(() => {
@@ -71,18 +68,57 @@ const Testimonials = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data: ", formData);
-    // Reset form and share state
-    setFormData({
-      name: "",
-      title: "",
-      avatar: null,
-      thoughts: "",
-    });
-    setShare(false);
+    try {
+      const res = await fetch(`/api/comment/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        const newComment = await res.json();
+        setComments([newComment, ...comments]); // Add new comment to the beginning of the list
+        setFormData({
+          username: "",
+          title: "",
+          avatar: null,
+          comment: "",
+        });
+        setShare(false);
+      } else {
+        console.error("Failed to create comment");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
+
+  const fetchComments = async () => {
+    try {
+      const res = await fetch(`/api/comment/getAll?limit=${limit}`);
+      const data = await res.json();
+      if (res.ok) {
+        setComments(data);
+        if (data.length < limit) {
+          setShowMore(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  const handleShowMore = () => {
+    setLimit((prevLimit) => prevLimit + 3);
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, [limit]);
 
   return (
     <section
@@ -119,8 +155,8 @@ const Testimonials = () => {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-6">
             <input
               type="text"
-              name="name"
-              value={formData.name}
+              name="username"
+              value={formData.username}
               onChange={handleInputChange}
               placeholder="Your Name"
               className="p-3 rounded-md border border-gray-300"
@@ -159,8 +195,8 @@ const Testimonials = () => {
               )}
             </p>
             <textarea
-              name="thoughts"
-              value={formData.thoughts}
+              name="comment"
+              value={formData.comment}
               onChange={handleInputChange}
               placeholder="Your Thoughts"
               className="p-3 rounded-md border border-gray-300 h-32"
@@ -174,10 +210,23 @@ const Testimonials = () => {
       )}
 
       <div className="flex flex-wrap sm:justify-start justify-center w-full feedback-container relative z-[1]">
-        {feedback.map((card) => (
-          <FeedbackCard key={card.id} {...card} />
+        {comments.map((comment, index) => (
+          <FeedbackCard
+            key={comment._id || index}
+            {...comment}
+            name={comment.username}
+            content={comment.comment}
+            title={comment.title}
+            img={comment.avatar}
+          />
         ))}
       </div>
+
+      {showMore && (
+        <Button styles="mt-6" onClick={handleShowMore}>
+          Show More
+        </Button>
+      )}
     </section>
   );
 };
