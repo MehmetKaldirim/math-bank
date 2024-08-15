@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import commentRouter from "./routes/comment.route.js";
+import authRouter from "./routes/auth.route.js";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config();
@@ -25,6 +26,7 @@ app.listen(port, () => {
 });
 
 app.use("/api/comment", commentRouter);
+app.use("/api/auth", authRouter);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
 
