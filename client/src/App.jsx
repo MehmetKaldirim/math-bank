@@ -6,11 +6,37 @@ import Profile from "./pages/Profile";
 
 const App = () => (
   <BrowserRouter>
-    <Layout />
     <Routes>
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/sign-in" element={<SignIn />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route
+        path="/"
+        element={
+          <Layout>{/* MainContent will be rendered by Layout */}</Layout>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <Layout>
+            <Admin />
+          </Layout>
+        }
+      />
+      <Route
+        path="/sign-in"
+        element={
+          <Layout>
+            <SignIn />
+          </Layout>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <Layout>
+            <Profile />
+          </Layout>
+        }
+      />
     </Routes>
   </BrowserRouter>
 );
