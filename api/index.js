@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 import commentRouter from "./routes/comment.route.js";
 import authRouter from "./routes/auth.route.js";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import path from "path";
+
 dotenv.config();
 const port = process.env.PORT || 3000;
 
@@ -19,11 +21,9 @@ mongoose
 const __dirname = path.resolve();
 const app = express();
 
-app.use(express.json());
+app.use(cookieParser());
 
-app.listen(port, () => {
-  console.log("Server is running on port " + port);
-});
+app.use(express.json());
 
 app.use("/api/comment", commentRouter);
 app.use("/api/auth", authRouter);
@@ -42,4 +42,8 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+app.listen(port, () => {
+  console.log("Server is running on port " + port);
 });

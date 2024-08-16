@@ -19,39 +19,36 @@ export const createComment = async (req, res, next) => {
 };
 
 export const deleteComment = async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
-
-  if (!comment) {
-    return next(errorHandler(404, "Comment not found!"));
-  }
-
-  if (req.user.id !== comment.userRef) {
-    return next(errorHandler(401, "You can only delete your own comments!"));
-  }
-
   try {
-    await Comment.findByIdAndDelete(req.params.id);
-    res.status(200).json("Comment has been deleted!");
+    const commentId = req.params.id;
+    const deletedComment = await Comment.findByIdAndDelete(commentId);
+
+    if (!deletedComment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {
     next(error);
   }
 };
 
+// Add updateComment method
 export const updateComment = async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
-  if (!comment) {
-    return next(errorHandler(404, "Comment not found!"));
-  }
-  if (req.user.id !== comment.userRef) {
-    return next(errorHandler(401, "You can only update your own comments!"));
-  }
-
   try {
+    const commentId = req.params.id;
     const updatedComment = await Comment.findByIdAndUpdate(
-      req.params.id,
+      commentId,
       req.body,
-      { new: true }
+      {
+        new: true,
+      }
     );
+
+    if (!updatedComment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
     res.status(200).json(updatedComment);
   } catch (error) {
     next(error);
@@ -72,13 +69,32 @@ export const getCommentById = async (req, res, next) => {
 
 export const getComments = async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit) || 3;
+    const limit = parseInt(req.query.limit) || 9;
     const startIndex = parseInt(req.query.startIndex) || 0;
 
     const sort = req.query.sort || "createdAt";
     const order = req.query.order || "desc"; // Default to descending order
 
     const comments = await Comment.find({})
+      .sort({ [sort]: order })
+      .limit(limit)
+      .skip(startIndex);
+
+    return res.status(200).json(comments);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getApproved = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit) || 3;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+
+    const sort = req.query.sort || "createdAt";
+    const order = req.query.order || "desc"; // Default to descending order
+
+    const comments = await Comment.find({ approved: true })
       .sort({ [sort]: order })
       .limit(limit)
       .skip(startIndex);

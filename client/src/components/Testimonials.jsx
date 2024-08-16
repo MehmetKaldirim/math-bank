@@ -99,7 +99,7 @@ const Testimonials = () => {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/comment/getAll?limit=${limit}`);
+      const res = await fetch(`/api/comment/getApproved?limit=${limit}`);
       const data = await res.json();
       if (res.ok) {
         setComments(data);
