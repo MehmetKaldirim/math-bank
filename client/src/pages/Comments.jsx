@@ -34,7 +34,7 @@ export default function Comments() {
 
   const handleDeleteConfirm = async () => {
     try {
-      const res = await fetch(`/api/comments/delete/${selectedComment._id}`, {
+      const res = await fetch(`/api/comment/delete/${selectedComment._id}`, {
         method: "DELETE",
       });
       if (res.ok) {
@@ -56,14 +56,15 @@ export default function Comments() {
   };
 
   return (
-    <div className="p-5">
-      <h2 className="text-2xl font-bold mb-4">Comments</h2>
+    <div className="p-5 bg-slate-400">
+      <h2 className="text-2xl font-bold mb-4 text-center text-white">
+        Comments
+      </h2>
       <table className="table-auto w-full text-white">
         <thead>
           <tr>
             <th>Avatar</th>
             <th>Username</th>
-            <th>Title</th>
             <th>Comment</th>
             <th>Approved</th>
             <th>Actions</th>
@@ -80,7 +81,6 @@ export default function Comments() {
                 />
               </td>
               <td>{comment.username}</td>
-              <td>{comment.title}</td>
               <td>{comment.comment}</td>
               <td>{comment.approved ? "Yes" : "No"}</td>
               <td>
