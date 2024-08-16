@@ -13,9 +13,6 @@ export default function SignUp() {
       [e.target.id]: e.target.value,
     });
   };
-  console.log(
-    "form data " + formData.username + formData.email + formData.password
-  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +34,7 @@ export default function SignUp() {
       }
       setLoading(false);
       setError(null);
-      navigate("/sign-in");
+      navigate("/comments");
     } catch (error) {
       setLoading(false);
       setError(error.message);
