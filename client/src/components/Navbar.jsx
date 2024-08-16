@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { close, logo, menu } from "../assets";
 import { navLinks } from "../constants/index";
 import { Link } from "react-router-dom";
+import { signoutSuccess } from "../redux/userSlice";
 
 const Navbar = () => {
   const [toggle, setToggle] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   const handleNavigation = (id) => {
-    // If the current route is not the root, navigate to the root before scrolling
     navigate(`/#${id}`);
+  };
+
+  const handleSignOut = () => {
+    dispatch(signoutSuccess()); // Clear the user state
+    navigate("/"); // Redirect to home page after sign out
   };
 
   return (
@@ -30,7 +38,11 @@ const Navbar = () => {
           </li>
         ))}
         <li className="font-poppins font-normal cursor-pointer text-[16px] text-white ml-10">
-          <Link to="/admin">Admin</Link>
+          {currentUser && currentUser.isAdmin ? (
+            <span onClick={handleSignOut}>Sign Out</span>
+          ) : (
+            <Link to="/admin">Admin</Link>
+          )}
         </li>
       </ul>
 
@@ -59,7 +71,11 @@ const Navbar = () => {
               </li>
             ))}
             <li className="font-poppins font-medium cursor-pointer text-[16px] mt-4">
-              <Link to="/admin">Admin</Link>
+              {currentUser && currentUser.isAdmin ? (
+                <span onClick={handleSignOut}>Sign Out</span>
+              ) : (
+                <Link to="/admin">Admin</Link>
+              )}
             </li>
           </ul>
         </div>
