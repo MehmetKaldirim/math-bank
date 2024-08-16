@@ -80,15 +80,15 @@ const Testimonials = () => {
       });
 
       if (res.ok) {
-        const newComment = await res.json();
-        setComments([newComment, ...comments]); // Add new comment to the beginning of the list
+        // Comment created successfully, reset the form without updating the view
         setFormData({
           username: "",
           title: "",
           avatar: null,
           comment: "",
         });
-        setShare(false);
+        setShare(false); // Optionally, you can also close the form after submission
+        alert("Your comment has been submitted for approval."); // Optionally show a success message
       } else {
         console.error("Failed to create comment");
       }

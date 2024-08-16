@@ -53,6 +53,7 @@ export default function Comments() {
 
   const handleUpdateClick = (commentId) => {
     navigate(`/updateComment/${commentId}`);
+    console.log("Update Clicked " + commentId);
   };
 
   return (
@@ -82,7 +83,7 @@ export default function Comments() {
               </td>
               <td>{comment.username}</td>
               <td>{comment.comment}</td>
-              <td>{comment.approved ? "Yes" : "No"}</td>
+              <td>{comment.isApproved ? "Yes" : "No"}</td>
               <td>
                 <button
                   onClick={() => handleDeleteClick(comment)}

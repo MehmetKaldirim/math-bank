@@ -94,7 +94,7 @@ export const getApproved = async (req, res, next) => {
     const sort = req.query.sort || "createdAt";
     const order = req.query.order || "desc"; // Default to descending order
 
-    const comments = await Comment.find({ approved: true })
+    const comments = await Comment.find({ isApproved: true })
       .sort({ [sort]: order })
       .limit(limit)
       .skip(startIndex);

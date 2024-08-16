@@ -4,6 +4,7 @@ import Admin from "./pages/Admin";
 import SignIn from "./pages/SignIn";
 import PrivateRoute from "./components/PrivateRoute";
 import Comments from "./pages/Comments";
+import UpdateComment from "./pages/UpdateComments";
 
 const App = () => (
   <BrowserRouter>
@@ -38,6 +39,14 @@ const App = () => (
           element={
             <Layout>
               <Comments />
+            </Layout>
+          }
+        />
+        <Route
+          path="/updateComment/:commentId"
+          element={
+            <Layout>
+              <UpdateComment />
             </Layout>
           }
         />

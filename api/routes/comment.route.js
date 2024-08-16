@@ -5,7 +5,8 @@ import {
   getComments,
   getApproved,
   deleteComment, // Add the deleteComment method
-  updateComment, // Add the updateComment method
+  updateComment,
+  getCommentById, // Add the updateComment method
 } from "../controllers/comment.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
 
@@ -23,6 +24,7 @@ const verifyAdmin = (req, res, next) => {
 router.get("/test", test);
 router.post("/create", createComment);
 router.get("/getAll", verifyToken, verifyAdmin, getComments); // Restrict to admins
+router.get("/get/:id", verifyToken, verifyAdmin, getCommentById); // Restrict to admins
 router.get("/getApproved", getApproved);
 router.delete("/delete/:id", verifyToken, verifyAdmin, deleteComment); // Delete route
 router.post("/update/:id", verifyToken, verifyAdmin, updateComment); // Update route
