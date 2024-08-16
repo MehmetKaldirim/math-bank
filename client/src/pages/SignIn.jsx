@@ -6,15 +6,18 @@ import OAuth from "../components/OAuth";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
+  const [notAllowedMessage, setNotAllowedMessage] = useState(""); // State for storing the not-allowed message
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -27,17 +30,27 @@ export default function SignIn() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log(data);
       if (data.success === false) {
         dispatch(signInFailure(data.message));
         return;
       }
+
+      // Check if the user is an admin
+      if (!data.isAdmin) {
+        setNotAllowedMessage(
+          "You are not allowed to see this page. This page is only for admin users."
+        );
+        dispatch(signInFailure("Unauthorized access"));
+        return;
+      }
+
       dispatch(signInSuccess(data));
       navigate("/comments");
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
   };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
@@ -66,12 +79,16 @@ export default function SignIn() {
         <OAuth />
       </form>
       <div className="flex gap-2 mt-5">
-        <p className="text-white">Dont have an account?</p>
-        <Link to={"/sign-up"}>
+        <p className="text-white">Don't have an account?</p>
+        <Link to={"/admin"}>
           <span className="text-blue-700">Sign up</span>
         </Link>
       </div>
       {error && <p className="text-red-500 mt-5">{error}</p>}
+      {notAllowedMessage && (
+        <p className="text-red-500 mt-5">{notAllowedMessage}</p>
+      )}{" "}
+      {/* Display not-allowed message */}
     </div>
   );
 }
